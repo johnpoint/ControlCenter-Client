@@ -5,7 +5,7 @@ import (
 	"github.com/docker/distribution/context"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
-	. "github.com/johnpoint/ControlCenter-Client/src/model"
+	"github.com/johnpoint/ControlCenter-Client/src/model"
 	"log"
 	"net/http"
 	"os"
@@ -105,8 +105,8 @@ func poll() {
 					os.Exit(0)
 				}
 				if gotData.Code == 212 {
-					main2.getUpdate()
-					main2.syncCer()
+					getUpdate()
+					syncCer()
 				}
 				if gotData.Code == 213 {
 					// Stop Container

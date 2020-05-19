@@ -2,7 +2,7 @@ package main
 
 import (
 	"encoding/json"
-	. "github.com/johnpoint/ControlCenter-Client/src/model"
+	"github.com/johnpoint/ControlCenter-Client/src/model"
 	"io"
 	"log"
 	"net/http"
