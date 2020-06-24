@@ -1,4 +1,4 @@
-package main
+package apis
 
 import (
 	"encoding/json"
@@ -9,7 +9,7 @@ import (
 	"os"
 )
 
-func getUpdate() bool {
+func GetUpdate() bool {
 	data := getData()
 	url := data.Base.PollAddress + "/server/update/" + data.Base.Token
 	method := "GET"

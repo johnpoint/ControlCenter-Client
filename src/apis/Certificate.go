@@ -1,4 +1,4 @@
-package main
+package apis
 
 import (
 	"encoding/json"
@@ -28,7 +28,7 @@ func addCer(id int64, domain string, fullchain string, key string) bool {
 	return true
 }
 
-func syncCer() bool {
+func SyncCer() bool {
 	sslPath := "/web/ssl/"
 	data := getData()
 	for i := 0; i < len(data.Certificates); i++ {

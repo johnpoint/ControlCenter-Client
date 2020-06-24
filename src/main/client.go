@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	. "github.com/johnpoint/ControlCenter-Client/src/apis"
 	. "github.com/johnpoint/ControlCenter-Client/src/model"
 	"io"
 	"io/ioutil"
@@ -11,8 +12,6 @@ import (
 	"os"
 	"strings"
 )
-
-const ClientVersion = "1.9.4"
 
 func main() {
 	go func() {
@@ -29,7 +28,7 @@ func main() {
 			return
 		}
 		setup(os.Args)
-		poll()
+		Poll()
 		return
 	}
 	if os.Args[1] == "help" {
@@ -37,15 +36,15 @@ func main() {
 		return
 	}
 	if os.Args[1] == "poll" {
-		poll()
+		Poll()
 		return
 	}
 	if os.Args[1] == "update" {
-		getUpdate()
+		GetUpdate()
 		return
 	}
 	if os.Args[1] == "sync" {
-		syncCer()
+		SyncCer()
 		return
 	}
 	fmt.Println("未知的参数")

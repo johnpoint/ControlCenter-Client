@@ -1,4 +1,4 @@
-package main
+package apis
 
 import (
 	"encoding/json"
@@ -23,7 +23,7 @@ import (
 	"github.com/shirou/gopsutil/net"
 )
 
-func poll() {
+func Poll() {
 	var timer int64 = 0
 	data := getData()
 	log.Print("[ Poll start ] To " + data.Base.PollAddress)
@@ -76,65 +76,69 @@ func poll() {
 					log.Print("Error:", err)
 					continue
 				}
-				if gotData.Code == 211 {
-					res.Body.Close()
-					log.Print("Update to new version")
-					resp, err := http.Get("https://cdn.lvcshu.info/xva/new/Client")
-					if err != nil {
-						log.Print(err)
-						continue
-					}
-					defer resp.Body.Close()
-					err = update.Apply(resp.Body, update.Options{})
-					if err != nil {
-						log.Print(err)
-						if rerr := update.RollbackError(err); rerr != nil {
-							log.Print("Failed to rollback from bad update: %v", rerr)
+				if gotData.Code/100 == 2 {
+					if gotData.Code == 211 {
+						res.Body.Close()
+						log.Print("Update to new version")
+						resp, err := http.Get("https://cdn.lvcshu.info/xva/new/Client")
+						if err != nil {
+							log.Print(err)
+							continue
 						}
-					}
-					os.Chmod(os.Args[0], 0777)
-					if err = syscall.Exec(os.Args[0], os.Args, os.Environ()); err != nil {
-						panic(err)
-					}
+						defer resp.Body.Close()
+						err = update.Apply(resp.Body, update.Options{})
+						if err != nil {
+							log.Print(err)
+							if rerr := update.RollbackError(err); rerr != nil {
+								log.Print("Failed to rollback from bad update: %v", rerr)
+							}
+						}
+						os.Chmod(os.Args[0], 0777)
+						if err = syscall.Exec(os.Args[0], os.Args, os.Environ()); err != nil {
+							panic(err)
+						}
 
-					res.Body.Close()
-					return
-				}
-				if gotData.Code == 210 {
-					log.Print("Exit")
-					os.Exit(0)
-				}
-				if gotData.Code == 212 {
-					getUpdate()
-					syncCer()
-				}
-				if gotData.Code == 213 {
-					// Stop Container
-					if gotData.Info != "" {
-						cli, err := client.NewEnvClient()
-						defer cli.Close()
-						if err != nil {
-							log.Print(err)
-						}
-						err = cli.ContainerStop(context.Background(), gotData.Info, nil)
-						if err != nil {
-							log.Print(err)
+						res.Body.Close()
+						return
+					}
+					if gotData.Code == 210 {
+						log.Print("Exit")
+						os.Exit(0)
+					}
+					if gotData.Code == 212 {
+						GetUpdate()
+						SyncCer()
+					}
+					if gotData.Code == 213 {
+						// Stop Container
+						if gotData.Info != "" {
+							cli, err := client.NewEnvClient()
+							defer cli.Close()
+							if err != nil {
+								log.Print(err)
+							}
+							err = cli.ContainerStop(context.Background(), gotData.Info, nil)
+							if err != nil {
+								log.Print(err)
+							}
 						}
 					}
-				}
-				if gotData.Code == 214 {
-					// Start Container
-					if gotData.Info != "" {
-						cli, err := client.NewEnvClient()
-						defer cli.Close()
-						if err != nil {
-							log.Print(err)
-						}
-						err = cli.ContainerStart(context.Background(), gotData.Info, types.ContainerStartOptions{})
-						if err != nil {
-							log.Print(err)
+					if gotData.Code == 214 {
+						// Start Container
+						if gotData.Info != "" {
+							cli, err := client.NewEnvClient()
+							defer cli.Close()
+							if err != nil {
+								log.Print(err)
+							}
+							err = cli.ContainerStart(context.Background(), gotData.Info, types.ContainerStartOptions{})
+							if err != nil {
+								log.Print(err)
+							}
 						}
 					}
+				} else {
+					log.Print("error! code not 2xx")
 				}
 				res.Body.Close()
 			}
