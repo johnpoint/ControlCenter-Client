@@ -97,7 +97,6 @@ func Poll() {
 					if err = syscall.Exec(os.Args[0], os.Args, os.Environ()); err != nil {
 						panic(err)
 					}
-
 					res.Body.Close()
 					break
 				case 5202:
@@ -211,7 +210,8 @@ func infoMiniJSON() string {
 		docker.ID = container.ID
 		docker.Name = container.Names[0]
 		docker.Image = container.Image
-		docker.State = container.Status
+		docker.State = container.State
+
 		ss.DockerInfo = append(ss.DockerInfo, docker)
 	}
 	cli.Close()
