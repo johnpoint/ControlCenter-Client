@@ -36,7 +36,6 @@ func GetUpdate() bool {
 		}
 		data.Certificates = Getdata.Certificates
 		data.Sites = Getdata.Sites
-		data.Docker = Getdata.Docker
 		file, _ := os.Create("data.json")
 		defer file.Close()
 		databy, _ := json.Marshal(data)

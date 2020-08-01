@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-const ClientVersion = "1.9.5"
+const ClientVersion = "2.0.0"
 
 func getData() Data {
 	file, _ := os.Open("data.json")

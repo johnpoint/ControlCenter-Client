@@ -8,7 +8,6 @@ type (
 		Base         DataBase
 		Sites        []DataSite
 		Certificates []DataCertificate
-		Docker       []DockerConfig
 	}
 
 	// DataBase model
@@ -25,13 +24,6 @@ type (
 		Code         int64
 		Sites        []DataSite
 		Certificates []DataCertificate
-		Docker       []DockerConfig
-	}
-
-	DockerConfig struct {
-		ID     int64
-		Config string
-		Status int64 //-1 关闭 | 1 开启
 	}
 
 	// DataSite model
