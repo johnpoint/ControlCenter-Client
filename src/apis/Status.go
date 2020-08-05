@@ -45,7 +45,7 @@ func Poll() {
 		}
 		timer++
 		time.Sleep(time.Duration(1) * time.Second)
-		if timer%3 == 0 {
+		if timer%1 == 0 {
 			defer func() {
 				log.Print("状态推送失败! 请检查服务端状态")
 			}()
@@ -106,6 +106,11 @@ func Poll() {
 					GetUpdate()
 					SyncCer()
 					break
+				case 5204:
+					log.Println("Restart")
+					if err := syscall.Exec(os.Args[0], os.Args, os.Environ()); err != nil {
+						panic(err)
+					}
 				case 6202:
 					if gotData.Info != "" {
 						cli, err := client.NewEnvClient()
