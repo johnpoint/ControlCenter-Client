@@ -6,8 +6,15 @@ type (
 	// Data model
 	Data struct {
 		Base         DataBase
-		Sites        []DataSite
 		Certificates []DataCertificate
+		ConfFile     []File
+	}
+
+	File struct {
+		Path   string
+		Name   string
+		Value  string
+		Enable string
 	}
 
 	// DataBase model
@@ -22,16 +29,8 @@ type (
 	// UpdateInfo model
 	UpdateInfo struct {
 		Code         int64
-		Sites        []DataSite
 		Certificates []DataCertificate
-	}
-
-	// DataSite model
-	DataSite struct {
-		ID     int64
-		Domain string
-		CerID  int64
-		Config string
+		ConfFile     []File
 	}
 
 	// DataDocker model

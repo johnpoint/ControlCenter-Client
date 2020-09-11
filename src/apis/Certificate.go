@@ -1,32 +1,9 @@
 package apis
 
 import (
-	"encoding/json"
-	"github.com/johnpoint/ControlCenter-Client/src/model"
 	"io"
-	"log"
 	"os"
 )
-
-func addCer(id int64, domain string, fullchain string, key string) bool {
-	data := getData()
-	for index := 0; index < len(data.Certificates); index++ {
-		if data.Certificates[index].ID == id {
-			log.Print("Certificate already exists")
-			return false
-		}
-	}
-	data.Certificates = append(data.Certificates, model.DataCertificate{ID: id, Domain: domain, FullChain: fullchain, Key: key})
-	file, _ := os.Create("data.json")
-	defer file.Close()
-	databy, _ := json.Marshal(data)
-	_, err := io.WriteString(file, string(databy))
-	if err != nil {
-		panic(err)
-	}
-	log.Print("OK!")
-	return true
-}
 
 func SyncCer() bool {
 	sslPath := "/web/ssl/"
@@ -48,24 +25,4 @@ func SyncCer() bool {
 		}
 	}
 	return true
-}
-
-func delCer(id int64) bool {
-	data := getData()
-	for index := 0; index < len(data.Certificates); index++ {
-		if data.Certificates[index].ID == id {
-			data.Certificates = append(data.Certificates[:index], data.Certificates[index+1:]...)
-			file, _ := os.Create("data.json")
-			defer file.Close()
-			databy, _ := json.Marshal(data)
-			_, err := io.WriteString(file, string(databy))
-			if err != nil {
-				panic(err)
-			}
-			log.Print("OK!")
-			return true
-		}
-	}
-	log.Print("Certificate not exists")
-	return false
 }

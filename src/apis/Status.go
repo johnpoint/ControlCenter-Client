@@ -7,6 +7,7 @@ import (
 	"github.com/docker/docker/client"
 	"github.com/inconshreveable/go-update"
 	"github.com/johnpoint/ControlCenter-Client/src/model"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -105,6 +106,7 @@ func Poll() {
 				case 5203:
 					GetUpdate()
 					SyncCer()
+					SyncFile()
 					break
 				case 5204:
 					log.Println("Restart")
@@ -226,5 +228,20 @@ func infoMiniJSON() string {
 		return ""
 	} else {
 		return string(b)
+	}
+}
+
+func SyncFile() {
+	data := getData()
+	for i := 0; i < len(data.ConfFile); i++ {
+		if _, err := os.Stat(data.ConfFile[i].Path); os.IsNotExist(err) {
+			os.Mkdir(data.ConfFile[i].Path, 0777)
+		}
+		fc, _ := os.Create(data.ConfFile[i].Path + "/" + data.ConfFile[i].Name)
+		defer fc.Close()
+		_, err := io.WriteString(fc, data.ConfFile[i].Value)
+		if err != nil {
+			panic(err)
+		}
 	}
 }

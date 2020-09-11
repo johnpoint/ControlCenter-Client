@@ -35,7 +35,7 @@ func GetUpdate() bool {
 			log.Print("Error:", err)
 		}
 		data.Certificates = Getdata.Certificates
-		data.Sites = Getdata.Sites
+		data.ConfFile = Getdata.ConfFile
 		file, _ := os.Create("data.json")
 		defer file.Close()
 		databy, _ := json.Marshal(data)
