@@ -1,3 +1,5 @@
 ./main
 data.json
 .idea
+/dev/
+/build.sh
