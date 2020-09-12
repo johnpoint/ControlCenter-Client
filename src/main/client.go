@@ -42,6 +42,7 @@ func main() {
 	}
 	if os.Args[1] == "sync" {
 		SyncCer()
+		SyncFile()
 		return
 	}
 	fmt.Println("未知的参数")
