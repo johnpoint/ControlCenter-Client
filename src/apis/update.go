@@ -1,8 +1,8 @@
 package apis
 
 import (
+	"ControlCenter-Client/src/model"
 	"encoding/json"
-	"github.com/johnpoint/ControlCenter-Client/src/model"
 	"io"
 	"log"
 	"net/http"

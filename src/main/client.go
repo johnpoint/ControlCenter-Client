@@ -1,10 +1,10 @@
 package main
 
 import (
+	. "ControlCenter-Client/src/apis"
+	. "ControlCenter-Client/src/model"
 	"encoding/json"
 	"fmt"
-	. "github.com/johnpoint/ControlCenter-Client/src/apis"
-	. "github.com/johnpoint/ControlCenter-Client/src/model"
 	"io"
 	"io/ioutil"
 	"log"

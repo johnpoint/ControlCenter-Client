@@ -1,12 +1,8 @@
 package apis
 
 import (
+	"ControlCenter-Client/src/model"
 	"encoding/json"
-	"github.com/docker/distribution/context"
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/client"
-	"github.com/inconshreveable/go-update"
-	"github.com/johnpoint/ControlCenter-Client/src/model"
 	"io"
 	"log"
 	"net/http"
@@ -15,6 +11,11 @@ import (
 	"strings"
 	"syscall"
 	"time"
+
+	"github.com/docker/distribution/context"
+	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/client"
+	"github.com/inconshreveable/go-update"
 
 	"github.com/shirou/gopsutil/cpu"
 	"github.com/shirou/gopsutil/disk"
