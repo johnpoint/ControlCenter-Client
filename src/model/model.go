@@ -11,9 +11,11 @@ type (
 	}
 
 	File struct {
-		Path  string
-		Name  string
-		Value string
+		ID      int64
+		Path    string
+		Name    string
+		Value   string
+		Deleted bool
 	}
 
 	// DataBase model

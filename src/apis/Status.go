@@ -234,15 +234,27 @@ func infoMiniJSON() string {
 
 func SyncFile() {
 	data := getData()
+	data2 := model.Data{}
+	data2.Base = data.Base
+	data2.Certificates = data2.Certificates
 	for i := 0; i < len(data.ConfFile); i++ {
-		if _, err := os.Stat(data.ConfFile[i].Path); os.IsNotExist(err) {
-			os.Mkdir(data.ConfFile[i].Path, 0777)
-		}
-		fc, _ := os.Create(data.ConfFile[i].Path + "/" + data.ConfFile[i].Name)
-		defer fc.Close()
-		_, err := io.WriteString(fc, data.ConfFile[i].Value)
-		if err != nil {
-			panic(err)
+		if data.ConfFile[i].Deleted {
+			os.Remove(data.ConfFile[i].Path + "/" + data.ConfFile[i].Name)
+		} else {
+			if _, err := os.Stat(data.ConfFile[i].Path); os.IsNotExist(err) {
+				os.Mkdir(data.ConfFile[i].Path, 0777)
+			}
+			fc, _ := os.Create(data.ConfFile[i].Path + "/" + data.ConfFile[i].Name)
+			defer fc.Close()
+			_, err := io.WriteString(fc, data.ConfFile[i].Value)
+			if err != nil {
+				panic(err)
+			}
+			data2.ConfFile = append(data2.ConfFile, data.ConfFile[i])
 		}
 	}
+	file, _ := os.Create("data.json")
+	defer file.Close()
+	databy, _ := json.Marshal(data2)
+	io.WriteString(file, string(databy))
 }

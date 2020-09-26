@@ -27,6 +27,7 @@ func GetUpdate() bool {
 		return false
 	}
 	if res != nil {
+		cdata := getData()
 		log.Print(":: Get update from " + data.Base.PollAddress)
 		decoder := json.NewDecoder(res.Body)
 		Getdata := model.UpdateInfo{}
@@ -35,14 +36,26 @@ func GetUpdate() bool {
 			log.Print("Error:", err)
 		}
 		data.Certificates = Getdata.Certificates
-		data.ConfFile = Getdata.ConfFile
+		newdata := Getdata.ConfFile
+		newdata2 := newdata
+		for _, i := range cdata.ConfFile {
+			exist := false
+			for _, j := range newdata2 {
+				if i.ID == j.ID && i.Name == j.Name && i.Path == j.Path {
+					exist = true
+					break
+				}
+			}
+			if !exist {
+				i.Deleted = true
+				newdata = append(newdata, i)
+			}
+		}
+		data.ConfFile = newdata
 		file, _ := os.Create("data.json")
 		defer file.Close()
 		databy, _ := json.Marshal(data)
 		io.WriteString(file, string(databy))
-		if err != nil {
-			panic(err)
-		}
 		log.Print("OK!")
 		return true
 	}
