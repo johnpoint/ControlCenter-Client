@@ -5,7 +5,6 @@
 package apis
 
 import (
-	"fmt"
 	"log"
 	"strings"
 	"time"
@@ -23,8 +22,7 @@ func websocketPush(url string, token string) {
 	c := websocket.Conn{}
 	defer c.Close()
 	for {
-		fmt.Println("try")
-		done := make(chan int64)
+		log.Println("[Websocket] Retry...")
 		c = websocket.Conn{}
 		log.Printf("[Websocket] connecting to %s", url)
 		c, _, err := websocket.DefaultDialer.Dial(url, nil)
@@ -42,47 +40,28 @@ func websocketPush(url string, token string) {
 
 		go func() {
 			for {
-				select {
-				case <-done:
-					done <- 1
-					return
-				default:
-					_, message, err := c.ReadMessage()
-					if err != nil {
-						log.Println("read:", err)
-					}
-					log.Printf("recv: %s", message)
+				_, message, err := c.ReadMessage()
+				if err != nil {
+					log.Println("read:", err)
+					break
 				}
+				log.Printf("recv: %s", message)
 			}
 		}()
 
 		status := make(chan string)
 		go func() {
 			for {
-				select {
-				case <-done:
-					done <- 1
-					return
-				default:
-					status <- "pushStatus#" + infoMiniJSON()
-					time.Sleep(time.Duration(3) * time.Second)
-				}
+				status <- "pushStatus#" + infoMiniJSON()
+				time.Sleep(time.Duration(3) * time.Second)
 			}
 		}()
 
 		for {
-			select {
-			case <-done:
-				break
-			case t := <-status:
-				err := c.WriteMessage(websocket.TextMessage, []byte(t))
-				if err != nil {
-					log.Println("write:", err)
-					done <- 1
-					break
-				}
-			}
-			if <-done == 1 {
+			t := <-status
+			err := c.WriteMessage(websocket.TextMessage, []byte(t))
+			if err != nil {
+				log.Println("write:", err)
 				break
 			}
 		}
