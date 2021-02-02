@@ -6,6 +6,7 @@ package apis
 
 import (
 	"log"
+	"os/exec"
 	"strings"
 	"time"
 
@@ -57,6 +58,13 @@ func websocketPush(url string, token string) {
 			}
 		}()
 
+		go func() {
+			for {
+				status <- "psStatus#" + runCommand("ps axc -o pid,user,stat,pcpu,pmem,command --sort -pcpu --no-header | head -n 100 | sed 's/\\ \\+/\\ /g'")
+				time.Sleep(time.Duration(30) * time.Second)
+			}
+		}()
+
 		for {
 			t := <-status
 			err := c.WriteMessage(websocket.TextMessage, []byte(t))
@@ -66,4 +74,13 @@ func websocketPush(url string, token string) {
 			}
 		}
 	}
+}
+
+func runCommand(command string) string {
+	cmd := exec.Command("bash", "-c", command)
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Fatalf("cmd.Run() failed with %s\n", err)
+	}
+	return string(out)
 }
