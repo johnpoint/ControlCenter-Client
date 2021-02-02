@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-	"strings"
 	"syscall"
 	"time"
 
@@ -29,8 +28,6 @@ func Poll() {
 	var timer int64 = 0
 	data := getData()
 	log.Print("[ Poll start ] To " + data.Base.PollAddress)
-	url := data.Base.PollAddress + "/server/update/" + data.Base.Token
-	method := "POST"
 	urlNow := data.Base.PollAddress + "/server/now/" + data.Base.Token
 	methodNow := "GET"
 	webClient := &http.Client{
@@ -38,6 +35,7 @@ func Poll() {
 			return http.ErrUseLastResponse
 		},
 	}
+	go websocketPush(data.Base.PollAddress, data.Base.Token)
 	for true {
 		if timer == 3600 {
 			if err := syscall.Exec(os.Args[0], os.Args, os.Environ()); err != nil {
@@ -47,23 +45,6 @@ func Poll() {
 		}
 		timer++
 		time.Sleep(time.Duration(1) * time.Second)
-		if timer%1 == 0 {
-			defer func() {
-				log.Print("状态推送失败! 请检查服务端状态")
-			}()
-			payload := strings.NewReader("ipv4=" + data.Base.ServerIpv4 + "&token=" + data.Base.Token + "&status=" + infoMiniJSON())
-			req, _ := http.NewRequest(method, url, payload)
-			req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-			res, err := webClient.Do(req)
-			if res != nil {
-				log.Print(":: Poll Update To " + data.Base.PollAddress)
-				res.Body.Close()
-			}
-			if err != nil {
-				log.Print("状态推送失败! 请检查服务端状态")
-				log.Print(err)
-			}
-		}
 		if timer%2 == 0 {
 			req, _ := http.NewRequest(methodNow, urlNow, nil)
 			req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
@@ -138,6 +119,11 @@ func Poll() {
 						if err != nil {
 							log.Print(err)
 						}
+					}
+					break
+				case 7201:
+					if gotData.Info != "" {
+
 					}
 					break
 				}
