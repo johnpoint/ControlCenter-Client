@@ -42,7 +42,8 @@ func websocketPush(url string, token string) {
 				_, message, err := c.ReadMessage()
 				if err != nil {
 					log.Println("read:", err)
-					return
+					time.Sleep(time.Duration(10) * time.Second)
+					continue
 				}
 				log.Printf("recv: %s", message)
 			}
