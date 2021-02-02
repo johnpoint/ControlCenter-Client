@@ -30,14 +30,13 @@ func websocketPush(url string, token string) {
 		c, _, err := websocket.DefaultDialer.Dial(url, nil)
 		if err != nil {
 			log.Println("[Websocket]", err)
-			time.Sleep(time.Duration(10) * time.Second)
+			time.Sleep(time.Duration(5) * time.Second)
 			continue
 		}
 
 		err = c.WriteMessage(websocket.TextMessage, []byte(token))
 		if err != nil {
 			log.Println("[Websocket] write:", err)
-			done <- 1
 			continue
 		}
 
@@ -51,8 +50,6 @@ func websocketPush(url string, token string) {
 					_, message, err := c.ReadMessage()
 					if err != nil {
 						log.Println("read:", err)
-						done <- 1
-						return
 					}
 					log.Printf("recv: %s", message)
 				}
