@@ -61,7 +61,7 @@ func websocketPush(url string, token string) {
 		go func() {
 			for {
 				status <- "psStatus#" + runCommand("ps axc -o pid,user,stat,pcpu,pmem,command --sort -pcpu --no-header | sed 's/\\ \\+/\\ /g'")
-				time.Sleep(time.Duration(5) * time.Second)
+				time.Sleep(time.Duration(20) * time.Second)
 			}
 		}()
 
